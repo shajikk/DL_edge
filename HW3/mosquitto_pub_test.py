@@ -19,7 +19,6 @@ mqttclient.connect(MQTT_HOST, MQTT_PORT, 60)
 # go into a loop
 mqttclient.loop_start()
 
-#to_send = {'test2.txt' : "Hello"}
 to_send = {'file' : 'test3.txt', 'dir' : 'TEST', 'data' : 'Hello World'}
 
 mqttclient.publish(MQTT_TOPIC, payload=pickle.dumps(to_send), qos=0, retain=False)
