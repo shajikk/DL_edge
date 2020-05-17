@@ -85,7 +85,9 @@ sudo docker build -t l4t-base.1 -f Dockerfile.l4t-base .
 export DISPLAY=192.168.0.191:1.0
 
 # Run the container. 
-sudo docker run -it --rm --name=cuda_base --network=tx2 --hostname="l4t_base" --volume $PWD:/home/work  --runtime nvidia  -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix  l4t-base.1:latest
+sudo docker run -it --rm --name=cuda_base --network=tx2 --hostname="l4t_base" \
+--volume $PWD:/home/work  --runtime nvidia  -e DISPLAY=$DISPLAY \
+-v /tmp/.X11-unix/:/tmp/.X11-unix  l4t-base.1:latest
 ```
 
 - Note that the Container polls for tx2 MQTT broker to be up before proceeding with frame capture.  
@@ -94,12 +96,31 @@ sudo docker run -it --rm --name=cuda_base --network=tx2 --hostname="l4t_base" --
 - The frame rate is also adjusted (currently 3fps) for this demo.  
 - Face is captured by OpenCV. The name of the file and the directory where the captured image file needs to be stored is set in this conatiner itself. All the information is pickled into a binary stream and send to the endpoint.  
 - `mosquitto_pub_test.py`  can be used to test the pipeline.  
+- Probably bring up as the last piece in pipeline, else when the container boots up it immiediately starts sending the package. 
 
-2) sudo docker build -t common.broker.1 -f Dockerfile.common.broker .
-   sudo docker run -it --rm  --name="tx2_broker" --network=tx2 --hostname="tx2_broker"  --volume $PWD:/home/work -p 1883:1883  common.broker.1:latest
+### Bring up the MQTT broker in jetson,  connect it to tx2 bridge network (Jetson)
 
-3) sudo docker build -t tx2.forward.1 -f Dockerfile.tx2.forward .
-   sudo docker run -it --rm  --name=tx2_forward --twork=tx2 --hostname="tx2_forward" --volume $PWD:/home/work -e REMOTE_HOST='169.45.121.163' tx2.forward.1:latest
+```bash
+# Build the docker image
+sudo docker build -t common.broker.1 -f Dockerfile.common.broker .
+
+# mosquitto -v is the only process running in the broker.
+sudo docker run -it --rm  --name="tx2_broker" --network=tx2 \
+--hostname="tx2_broker"  --volume $PWD:/home/work -p 1883:1883  \
+common.broker.1:latest
+```
+
+### Bring up the Package forwarder in jetson,  connect it to tx2 bridge network (Jetson)
+```bash
+# Build the docker image
+sudo docker build -t tx2.forward.1 -f Dockerfile.tx2.forward .
+
+# Executes tx2_forward.py as a micro service.
+sudo docker run -it --rm  --name=tx2_forward --twork=tx2 \
+--hostname="tx2_forward" --volume $PWD:/home/work \
+-e REMOTE_HOST='169.45.121.163' tx2.forward.1:latest
+```
+- `REMOTE_HOST` needs to be provided as the env variable. This will be used by `tx2_forward.py`. The ip address is the ip address of the remote VM in the cloud.
 
 
 *) sudo docker network create --driver bridge cloud
