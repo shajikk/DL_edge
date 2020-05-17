@@ -32,6 +32,18 @@
  - cloud_saver.py:  
    Main program that runs by default after cloud_saver container ( Dockerfile.cloud.saver above) boots up.
 
+ - .cos_creds:  
+   Needed for s3 mounting to work. Excluded from git due to security. 
+
+## Setup and workflow.
+
+Clone this repo into jetson tx2. Populate the ".cos_creds" with s3 access credentials. Start an VM in the cloud. Copy over (or clone) this HW directory into the VM.
+For example, Rsync can be used for copying the HW3 into the remote VM 
+
+```bash
+rsync -avz -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"    \
+--progress  /data/w251/DL_edge/HW3  root@xxx.xxx.xx.xx:/root/w251/
+```
 
 docker network rm tx2
 docker rm $(docker ps -a -q)
