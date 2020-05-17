@@ -1,35 +1,35 @@
 # Internet of Things
 
-- List of files
+- List of files  
 
- - Dockerfile.l4t-base
+ - Dockerfile.l4t-base  
    Docker file for CUDA ubundu for tx2.
 
- - face_detect.py
+ - face_detect.py  
    Main program that runs by default after cuda_base container (Dockerfile.l4t-base above) boots up.
 
- - clean_images
+ - clean_images  
    Used for cleaning the local image directory when face_detect.py is run in debug mode.
 
- - mosquitto_pub_test.py
+ - mosquitto_pub_test.py 
    This is used for initial testing of pipeline. Instead of sending images, it sends text files. Used for initial pipe cleaning of the pipeline. 
 
- - Dockerfile.common.broker
+ - Dockerfile.common.broker  
    Docker file for broker. This just runs the mosquitto service.
 
- - Dockerfile.tx2.forward
+ - Dockerfile.tx2.forward  
    Docker file for MQTT traffic forwarder to IBM cloud.
 
- - tx2_forward.py
+ - tx2_forward.py  
    Main program that runs by default after tx2_forward container (Dockerfile.tx2.forward above) boots up.
 
- - Dockerfile.cloud.saver
+ - Dockerfile.cloud.saver  
    Docker file for containter that gets data from cloud broker and saves in IBM S3 object storage
 
- - entrypoint.sh
+ - entrypoint.sh  
    This serves as an entry point for the docker container Dockerfile.cloud.saver. It mounts S3 object storage using s3fs and proceed to run the main microservice.
 
- - cloud_saver.py
+ - cloud_saver.py  
    Main program that runs by default after cloud_saver container ( Dockerfile.cloud.saver above) boots up.
 
 
