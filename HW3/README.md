@@ -45,25 +45,60 @@ rsync -avz -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" 
 --progress  /data/w251/DL_edge/HW3  root@xxx.xxx.xx.xx:/root/w251/
 ```
 
+## Initial clean up
+
+First, remove any networks and stopped containers.
+
+In Jetson TX2 do :
+
+```bash
 docker network rm tx2
 docker rm $(docker ps -a -q)
+```
 
+In VM in the cloud :
+```bash
 docker network rm cloud
 docker rm $(docker ps -a -q)
+```
 
-eg. Login : docker exec -it tx2_broker  /bin/sh
+## Steps
 
-*) sudo docker network create --driver bridge tx2
-   sudo docker network inspect tx2 [inspect bridge]
+### Create a bridge network at Tx2 (Jetson side)
 
-1) sudo docker build -t l4t-base.1 -f Dockerfile.l4t-base .
-   sudo docker run -it --rm --name=cuda_base --network=tx2 --hostname="l4t_base" --volume $PWD:/home/work  --runtime nvidia  -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix  l4t-base.1:latest
+```bash
+# Create tx2 bridge
+sudo docker network create --driver bridge tx2
+
+# Inspect the network.
+sudo docker network inspect tx2 [inspect bridge]
+```
+
+### Build & Boot up cuda ubundu, connect it to tx2 bridge network (Jetson)
+
+```bash
+# Build the docker image
+sudo docker build -t l4t-base.1 -f Dockerfile.l4t-base .
+
+# Export the display explicitly. The default display "jetson:1.0" is not working
+# Probably because Xfce is made the display manager, instead of Unity. 
+export DISPLAY=192.168.0.191:1.0
+
+# Run the container. 
+sudo docker run -it --rm --name=cuda_base --network=tx2 --hostname="l4t_base" --volume $PWD:/home/work  --runtime nvidia  -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix  l4t-base.1:latest
+```
+
+- Note that the Container polls for tx2 MQTT broker to be up before proceeding with frame capture.  
+- RTSP wifi camera is used instead of USB camera, as I don't have a USB camera.   
+- The the default frame size of the Wifi camera is 1080p. This is rescaled to a lower resolution for fitting the camera feed on to the Ubundu Xfce desktop.   
+- The frame rate is also adjusted (currently 3fps) for this demo.  
+- Face is captured by OpenCV. The name of the file and the directory where the captured image file needs to be stored is set in this conatiner itself. All the information is pickled into a binary stream and send to the endpoint.  
+- `mosquitto_pub_test.py`  can be used to test the pipeline.  
 
 2) sudo docker build -t common.broker.1 -f Dockerfile.common.broker .
    sudo docker run -it --rm  --name="tx2_broker" --network=tx2 --hostname="tx2_broker"  --volume $PWD:/home/work -p 1883:1883  common.broker.1:latest
 
 3) sudo docker build -t tx2.forward.1 -f Dockerfile.tx2.forward .
-   # Get it from ENV : to do
    sudo docker run -it --rm  --name=tx2_forward --twork=tx2 --hostname="tx2_forward" --volume $PWD:/home/work -e REMOTE_HOST='169.45.121.163' tx2.forward.1:latest
 
 
@@ -77,6 +112,7 @@ eg. Login : docker exec -it tx2_broker  /bin/sh
 5) sudo docker build -t cloud.saver.1 -f Dockerfile.cloud.saver .
    docker run -it --rm  --privileged  --name="cloud_saver" --network=cloud --hostname="cloud_saver" --volume $PWD:/home/work    cloud.saver.1:latest
 
+eg. Login : docker exec -it tx2_broker  /bin/sh
 Test : ./mosquitto_pub_test.py
 
 Check : 
