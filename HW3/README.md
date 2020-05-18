@@ -82,7 +82,7 @@ sudo docker build -t l4t-base.1 -f Dockerfile.l4t-base .
 
 # Export the display explicitly. The default display "jetson:1.0" is not working
 # Probably because Xfce is made the display manager, instead of Unity. 
-export DISPLAY=192.168.0.191:1.0
+export DISPLAY=192.168.0.192:1.0
 
 # Run the container. 
 sudo docker run -it --rm --name=cuda_base --network=tx2 --hostname="l4t_base" \
@@ -177,3 +177,24 @@ ls -altr
 
 ### Other information
 - MQTT topics are named as "video/face"
+- The images are stored in the S3 object storage as timestamped directories, depending on what time the capture is done. The directory name is computed at the jetson side, and is serialized and send through the pipeline along with image data. On the saver side, the images are saved in the appropriate directories.
+
+```bash
+/mnt/s3bucket1
+ |
+ `---hw_faces
+     |
+     |----May_18_02_06
+     |    |
+     |    |---- image_0.png
+     |    |
+     |    |---- <image.png>
+     |    |
+     |    `---- image_1.png
+     |    
+     |----May_18_02_07
+     |    |---- image_0.png
+     |    |
+     |    |---- image_1.png
+     |    |
+```
