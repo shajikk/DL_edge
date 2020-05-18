@@ -96,7 +96,7 @@ sudo docker run -it --rm --name=cuda_base --network=tx2 --hostname="l4t_base" \
 - The frame rate is also adjusted (currently 3fps) for this demo.  
 - Face is captured by OpenCV. The name of the file and the directory where the captured image file needs to be stored is set in this conatiner itself. All the information is pickled into a binary stream and send to the endpoint.  
 - `mosquitto_pub_test.py`  can be used to test the pipeline.  
-- Probably bring up as the last piece in pipeline, else when the container boots up it immiediately starts sending the package. 
+- **Bring up this container as the last piece in pipeline**, else when the container boots up it immiediately starts sending the package. 
 
 ### Bring up the MQTT broker in jetson,  connect it to tx2 bridge network (Jetson)
 
@@ -123,22 +123,57 @@ sudo docker run -it --rm  --name=tx2_forward --twork=tx2 \
 - `REMOTE_HOST` needs to be provided as the env variable. This will be used by `tx2_forward.py`. The ip address is the ip address of the remote VM in the cloud.
 
 
-*) sudo docker network create --driver bridge cloud
-   sudo docker network inspect cloud
+### Create a bridge network in the cloud VM machine
+```bash
+# Bring up the bridge network
+sudo docker network create --driver bridge cloud
 
+# Inspect the network
+sudo docker network inspect cloud
+```
 
-4) sudo docker build -t common.broker.1 -f Dockerfile.common.broker .
-   docker run -it --rm  --name="cloud_broker" --network=cloud --hostname="cloud_broker"  --volume $PWD:/home/work -p 1883:1883  common.broker.1:latest
+### Bring up the  MQTT broker in the cloud VM machine,  connect it to cloud bridge network (cloud VM)
+```bash
+# Build the docker image
+sudo docker build -t common.broker.1 -f Dockerfile.common.broker .
 
-5) sudo docker build -t cloud.saver.1 -f Dockerfile.cloud.saver .
-   docker run -it --rm  --privileged  --name="cloud_saver" --network=cloud --hostname="cloud_saver" --volume $PWD:/home/work    cloud.saver.1:latest
+# Bring up the MQTT broker (same as in TX2)
+sudo docker run -it --rm  --name="cloud_broker" --network=cloud \
+--hostname="cloud_broker"  --volume $PWD:/home/work -p 1883:1883  \
+common.broker.1:latest
+```
 
-eg. Login : docker exec -it tx2_broker  /bin/sh
-Test : ./mosquitto_pub_test.py
+### Bring up the  package saver in the cloud VM machine,  connect it to cloud bridge network (cloud VM)
+```bash
+# Build the docker image
+sudo docker build -t cloud.saver.1 -f Dockerfile.cloud.saver .
 
-Check : 
+# Launch the container
+sudo docker run -it --rm  --privileged  --name="cloud_saver" \
+--network=cloud --hostname="cloud_saver" --volume $PWD:/home/work    \
+cloud.saver.1:latest
+```
 
-ssh root@169.45.121.163
+- The container launches `entrypoint.sh`. It mounts the s3 file system
+- It then goes ahead and launches `cloud_saver.py` which saves the received images into object storage.
+
+### Debug
+
+For debugging containers, users can exec into container from another terminal.
+
+```bash 
+docker exec -it tx2_broker  /bin/sh
+```
+
+For example, log into cloud_saver and check for s3 stored images :
+
+```bash 
+ssh root@xxx.xxx.xxx.xx # IP of the VM in cloud
 sudo docker exec -it cloud_saver /bin/bash
 df -h
 cd /mnt/drive0
+ls -altr 
+```
+
+### Other information
+- MQTT topics are named as "video/face"
