@@ -200,3 +200,4 @@ ls -altr
 ```
 
 - QOS : The client that publishes the message to the broker defines the QoS level of the message when it sends the message to the broker. The broker transmits this message to subscribing clients using the QoS level that each subscribing client defines during the subscription process. If the subscribing client defines a lower QoS than the publishing client, the broker transmits the message with the lower quality of service. The QoS level I used in this project is zero, meaning it guarantees a best-effort delivery. There is no guarantee of delivery. The recipient does not acknowledge receipt of the message and the message is not stored and re-transmitted by the sender. 
+- The http link to the location of faces in the object storage  : http://169.45.121.163:8000/May_18_02_07/
