@@ -51,7 +51,7 @@ while True:
 # go into a loop
 local_mqttclient.loop_start()
 
-local_mqttclient.subscribe(LOCAL_MQTT_TOPIC)
+local_mqttclient.subscribe(LOCAL_MQTT_TOPIC) # qos defaults to zero
 
 
 try:
