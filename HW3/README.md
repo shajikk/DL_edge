@@ -52,14 +52,14 @@ First, remove any networks and stopped containers.
 In Jetson TX2 do :
 
 ```bash
-docker network rm tx2
-docker rm $(docker ps -a -q)
+sudo docker network rm tx2
+sudo docker rm $(docker ps -a -q)
 ```
 
 In VM in the cloud :
 ```bash
-docker network rm cloud
-docker rm $(docker ps -a -q)
+sudo docker network rm cloud
+sudo docker rm $(docker ps -a -q)
 ```
 
 ## Steps
@@ -116,7 +116,7 @@ common.broker.1:latest
 sudo docker build -t tx2.forward.1 -f Dockerfile.tx2.forward .
 
 # Executes tx2_forward.py as a micro service.
-sudo docker run -it --rm  --name=tx2_forward --twork=tx2 \
+sudo docker run -it --rm  --name=tx2_forward --network=tx2 \
 --hostname="tx2_forward" --volume $PWD:/home/work \
 -e REMOTE_HOST='169.45.121.163' tx2.forward.1:latest
 ```
