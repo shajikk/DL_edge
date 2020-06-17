@@ -1,0 +1,11 @@
+FROM alpine:latest
+  
+RUN apk update && \
+    apk add mosquitto
+
+USER root
+
+WORKDIR /home/work
+
+#CMD ["mosquitto" , "-v"]
+CMD ["/bin/sh" , "-c", "mosquitto -v"]
