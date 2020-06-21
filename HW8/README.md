@@ -1,6 +1,7 @@
 # Part 1: Image Annotation
 
-* In the time allowed, how many images did you annotate?
+* In the time allowed, how many images did you annotate?  
+
 Annotated 73 images in 25 minutes,
 
 * Home many instances of the Millennium Falcon did you annotate? How many TIE Fighters?
@@ -44,4 +45,7 @@ This is adding some form of noise to the data improves the robustness of the net
 
 # Part 3: Audio Annotation
 
+* Image annotations require the coordinates of the objects and their classes; in your option, what is needed for an audio annotation?
+
 For audio it is the time from the beginning of the clip
+
