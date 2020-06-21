@@ -1,0 +1,28 @@
+<annotation>
+	<folder>images</folder>
+	<filename>videoplayback0886.jpg</filename>
+	<path>/work/MIDS_HW8/images/videoplayback0886.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1000</width>
+		<height>563</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>The Millennium Falcon
+
+</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>171</xmin>
+			<ymin>153</ymin>
+			<xmax>743</xmax>
+			<ymax>359</ymax>
+		</bndbox>
+	</object>
+</annotation>

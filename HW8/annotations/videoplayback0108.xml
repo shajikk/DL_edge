@@ -1,0 +1,38 @@
+<annotation>
+	<folder>images</folder>
+	<filename>videoplayback0108.jpg</filename>
+	<path>/work/MIDS_HW8/images/videoplayback0108.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1000</width>
+		<height>563</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>tie fighter</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>121</xmin>
+			<ymin>254</ymin>
+			<xmax>143</xmax>
+			<ymax>275</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>tie fighter</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>148</xmin>
+			<ymin>273</ymin>
+			<xmax>173</xmax>
+			<ymax>298</ymax>
+		</bndbox>
+	</object>
+</annotation>
