@@ -2,7 +2,7 @@
 
 ## Questions
 
-* How long does it take to complete the training run? (hint: this session is on distributed training, so it will take a while)
+### How long does it take to complete the training run? (hint: this session is on distributed training, so it will take a while)
 It took 1536m23s
 
 The command is modified as below with "time" to capture accurate stats.
@@ -12,9 +12,9 @@ Had to kill the run at 52000 steps
 nohup bash -c "time mpirun --allow-run-as-root -n 4 -H 10.45.220.130:2,10.45.220.139:2 -bind-to none -map-by slot --mca btl_tcp_if_include eth0 -x NCCL_SOCKET_IFNAME=eth0 -x NCCL_DEBUG=INFO -x LD_LIBRARY_PATH python run.py --config_file=/data/transformer-base.py --use_horovod=True --mode=train_eval" &
 ```
 
-* Do you think your model is fully trained? How can you tell?
-* Were you overfitting?
-* Were your GPUs fully utilized?
+### Do you think your model is fully trained? How can you tell?
+### Were you overfitting?
+### Were your GPUs fully utilized?
 
  - The GPUs were fully utlized. I tried nvidia-smi on both machines and I am able to see that they hit 100%
  - The Memory-Usage on both GPUs were close to 100%
@@ -47,11 +47,11 @@ nohup bash -c "time mpirun --allow-run-as-root -n 4 -H 10.45.220.130:2,10.45.220
 +-------------------------------+----------------------+----------------------+
 ```
 
-* Did you monitor network traffic (hint: apt install nmon ) ? Was network the bottleneck?
+### Did you monitor network traffic (hint: apt install nmon ) ? Was network the bottleneck?
 The network is not a bottleneck. The network Speed is 1000Mbps. 
 The Recv and Trans speed is 230 Mbps max both , individually. So together it does not come close to 1000Mbps.
 
-* Take a look at the plot of the learning rate and then check the config file. Can you explan this setting?
+### Take a look at the plot of the learning rate and then check the config file. Can you explan this setting?
 
 The file "transformer-base.py" has the following setting:
 
@@ -66,12 +66,12 @@ The file "transformer-base.py" has the following setting:
 
 So, until step 8000, the learning rate goes learnearly up. (high learning rate), then it slows down. 
 
-* How big was your training set (mb)? How many training lines did it contain?
+### How big was your training set (mb)? How many training lines did it contain?
 
 The training set is 636 Mb (English) + 710 Mb (German). Total is 1.3G
 Total 4562102 lines each.  
 
-* What are the files that a TF checkpoint is comprised of?
+### What are the files that a TF checkpoint is comprised of?
 
 Below are the files that a TF checkpoint is comprised of
 
@@ -82,7 +82,7 @@ Below are the files that a TF checkpoint is comprised of
 -rw-r--r-- 1 root root  15374541 Jun 27 05:55 model.ckpt-0.meta
 ```
 
-* How big is your resulting model checkpoint (mb)?
+### How big is your resulting model checkpoint (mb)?
 ```
 -rw-r--r-- 1 shajikk1 shajikk1 852267044 Jun 28 04:49 'val_loss=1.6078-step-48013.data-00000-of-00001'
 -rw-r--r-- 1 shajikk1 shajikk1     36131 Jun 28 04:49 'val_loss=1.6078-step-48013.index'
@@ -92,9 +92,9 @@ Below are the files that a TF checkpoint is comprised of
 The model check point consists of 3 files of total 867 Mb.
 
 
-* Remember the definition of a "step". How long did an average step take?
-The average step took 1.714 seconds.
+### Remember the definition of a "step". How long did an average step take?
+The average step took 1.714 seconds. Added up all the averages printed in nohup.out and found the average of that using bc utility.
 
-* How does that correlate with the observed network utilization between nodes?
+### How does that correlate with the observed network utilization between nodes?
 Yes, the nmap Recv and Trans output for each machine seems to change around 2 seconds and that shows some correlation.
 
