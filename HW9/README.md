@@ -13,7 +13,13 @@ nohup bash -c "time mpirun --allow-run-as-root -n 4 -H 10.45.220.130:2,10.45.220
 ```
 
 ### Do you think your model is fully trained? How can you tell?
+
+The evaluation loss kept on decreasing, but at a slow rate. If we run for more steps, the loss may still decrease, but it can lead to overfitting.
+
 ### Were you overfitting?
+
+I was not able to observe the validation loss (stopped training after 50K). So it is not clear whether the model is overfitting. 
+
 ### Were your GPUs fully utilized?
 
  - The GPUs were fully utlized. I tried nvidia-smi on both machines and I am able to see that they hit 100%
@@ -48,6 +54,7 @@ nohup bash -c "time mpirun --allow-run-as-root -n 4 -H 10.45.220.130:2,10.45.220
 ```
 
 ### Did you monitor network traffic (hint: apt install nmon ) ? Was network the bottleneck?
+
 The network is not a bottleneck. The network Speed is 1000Mbps. 
 The Recv and Trans speed is 230 Mbps max both , individually. So together it does not come close to 1000Mbps.
 
